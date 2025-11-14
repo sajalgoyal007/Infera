@@ -1,0 +1,159 @@
+{
+    "title": "Infera: The Probabilistic Universe Simulator",
+    "category": "Most Technically Impressive",
+    "tagline": "A world that learns gravity — not one that knows it.",
+    "summary": "An interactive 3D sandbox where particles don’t know physics — they learn it. Each object begins uncertain about constants like gravity, mass, and friction. Through Bayesian inference and Kalman filtering, the simulation continuously updates these beliefs as the universe evolves. The entire world learns the laws of motion in real time, visualized as glowing, uncertain particles in a black minimalist cosmos.",
+    "problem_statement": "Most physics engines hardcode the laws of motion — acceleration, gravity, friction — as fixed constants. Real intelligent systems, however, infer these laws from experience and uncertainty. This project reimagines physics simulation as a learning process. The goal is to build a universe that starts ignorant of its own rules and gradually discovers them through probabilistic reasoning.",
+    "concept": {
+      "core_idea": "Each particle maintains probabilistic beliefs about physical constants. As it moves, it observes its own motion and updates its belief distributions using Bayesian inference. Over time, these distributions converge toward the true constants — producing a visible reduction in uncertainty. The simulation thus mirrors the scientific process itself: experimentation, observation, and inference.",
+      "visual_idea": "At the start, motion is chaotic and blurry — high uncertainty. As the simulation learns, uncertainty fades, and particles move smoothly. Glow intensity and motion blur represent belief variance."
+    },
+    "mathematical_foundation": {
+      "overview": "The system fuses Newtonian mechanics with Bayesian updating, treating unknown constants as random variables whose posteriors evolve over time.",
+      "key_variables": {
+        "state_vector": "x_t = [p_x, p_y, v_x, v_y, g, m, μ]^T",
+        "observations": "z_t = [Δp_x, Δp_y, Δv_x, Δv_y]^T"
+      },
+      "priors": {
+        "gravity": "g ~ N(9.8, σ_g^2)",
+        "mass": "m ~ N(1.0, σ_m^2)",
+        "friction": "μ ~ N(0.1, σ_μ^2)"
+      },
+      "motion_model": {
+        "description": "The simulation follows a simplified probabilistic version of Newton’s laws.",
+        "equations": [
+          "p_{t+1} = p_t + v_t Δt + 0.5 * g_t * Δt²",
+          "v_{t+1} = v_t + g_t * Δt - μ_t * v_t * Δt",
+          "g_t, μ_t updated via Bayesian posterior inference"
+        ]
+      },
+      "bayesian_update": {
+        "definition": "P(θ|D) ∝ P(D|θ) P(θ)",
+        "explanation": "Given a new observation D (position or velocity change), the system updates its belief in θ = {g, m, μ}. The likelihood P(D|θ) measures how well a given parameter set predicts observed motion. The prior P(θ) represents the object’s current beliefs, and the product defines the posterior distribution P(θ|D).",
+        "result": "As more data arrives, the posterior mean converges to the true constants, and variance shrinks — visualized as decreased uncertainty glow."
+      },
+      "kalman_filter": {
+        "description": "Each particle runs an Extended Kalman Filter (EKF) to handle noisy, nonlinear motion updates.",
+        "prediction_step": [
+          "x̂_t|t-1 = f(x̂_{t-1|t-1})",
+          "P_t|t-1 = F_t P_{t-1|t-1} F_t^T + Q_t"
+        ],
+        "update_step": [
+          "K_t = P_t|t-1 H_t^T (H_t P_t|t-1 H_t^T + R_t)^(-1)",
+          "x̂_t|t = x̂_t|t-1 + K_t (z_t - H_t x̂_t|t-1)",
+          "P_t|t = (I - K_t H_t) P_t|t-1"
+        ],
+        "interpretation": "Each iteration predicts next motion based on current belief, compares with actual observed motion, and corrects estimates of hidden variables (like gravity). The covariance P_t encodes uncertainty; it drives visual glow and motion blur."
+      },
+      "likelihood_function": {
+        "form": "P(D|θ) = exp(- (Δx_obs - Δx_pred(θ))² / (2σ²))",
+        "meaning": "The probability of seeing a certain motion given a hypothesis θ decreases as the prediction error increases. This ensures smooth learning as the system corrects itself from observed discrepancies."
+      },
+      "visual_mapping": {
+        "σ_visual": "σ ∝ particle blur radius",
+        "confidence_color": "C = mix(purple, white, (1 - variance_norm))",
+        "glow_equation": "glow_intensity = exp(-variance * k)"
+      }
+    },
+    "tech_stack": {
+      "frontend": {
+        "framework": "React + Three.js",
+        "description": "Renders the universe as a 3D interactive sandbox where each particle glows according to its uncertainty. The user can spawn new particles or adjust priors live.",
+        "key_ui_elements": [
+          "Black cosmic background (#000000)",
+          "Purple glow accents (#9b5de5)",
+          "Fonts: Playwrite MX Guides (titles), Inter (body)",
+          "Minimal glass-like control panel (translucent purple overlay)"
+        ]
+      },
+      "simulation_engine": {
+        "language": "JavaScript / WebAssembly",
+        "responsibilities": [
+          "Simulate motion with uncertain parameters",
+          "Compute predicted next state using probabilistic dynamics",
+          "Feed observations into Bayesian update module each frame"
+        ]
+      },
+      "inference_engine": {
+        "library": "TensorFlow Probability / custom Kalman filter in JS",
+        "responsibilities": [
+          "Perform posterior estimation per particle",
+          "Maintain global vs local uncertainty models",
+          "Emit variance for visualization"
+        ]
+      },
+      "visualization": {
+        "library": "Three.js + GLSL shaders",
+        "render_logic": "Particle glow intensity ∝ 1 / variance",
+        "animation": "As variance decreases, particle trails shorten and color sharpens from diffuse purple to bright white.",
+        "effects": [
+          "Fuzzy glow using Gaussian blur shaders",
+          "Subtle radial gradient background",
+          "Low-opacity purple particle tails for uncertainty visualization"
+        ]
+      }
+    },
+    "interaction_flow": [
+      {
+        "step": 1,
+        "action": "User opens the simulation. A black void with soft purple ambient light appears."
+      },
+      {
+        "step": 2,
+        "action": "User spawns a particle. Its initial glow is diffuse — representing high uncertainty in gravity."
+      },
+      {
+        "step": 3,
+        "action": "The particle moves unpredictably as it randomly samples from its belief distribution for gravity and friction."
+      },
+      {
+        "step": 4,
+        "action": "At each frame, the Kalman filter compares predicted vs. observed motion and updates the posterior distribution for g and μ."
+      },
+      {
+        "step": 5,
+        "action": "Uncertainty (variance) decreases. Glow sharpens, movement stabilizes — the particle has 'learned' gravity."
+      },
+      {
+        "step": 6,
+        "action": "The side control panel shows real-time parameters: g = 9.81 ± 0.04, μ = 0.12 ± 0.02."
+      }
+    ],
+    "advanced_features": [
+      {
+        "name": "Hierarchical Bayesian Universe",
+        "description": "All objects contribute to a shared global posterior for universal constants (e.g., gravity) while maintaining local uncertainties. The simulation thus models a 'scientific consensus' forming from multiple agents."
+      },
+      {
+        "name": "Symbolic Equation Discovery",
+        "description": "Optional backend regression attempts to rediscover the underlying motion equation (y'' = -g) from learned data, demonstrating AI-led law discovery."
+      },
+      {
+        "name": "Uncertainty-Based Shader Rendering",
+        "description": "Variance values are mapped to real-time glow and blur through custom GLSL shaders, turning probability into visual art."
+      },
+      {
+        "name": "Meta-Learning Layer",
+        "description": "A meta-agent tunes learning rates and noise covariances adaptively, optimizing the system’s ability to converge on physical constants efficiently."
+      }
+    ],
+    "showcase_strategy": {
+      "demo_narrative": "Begin with a black void. Introduce a glowing purple sphere — uncertain, chaotic. As time passes, it learns gravity: motion becomes graceful, blur vanishes, and color stabilizes. The world evolves from ignorance to understanding.",
+      "visual_theme": {
+        "style": "Black minimalist UI with subtle purple gradients, glowing uncertainty, and clean typography.",
+        "font_imports": [
+          "https://fonts.googleapis.com/css2?family=Playwrite+MX+Guides&display=swap",
+          "https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap"
+        ],
+        "color_palette": {
+          "background": "#000000",
+          "accent": "#600ac7",
+          "text": "#e5e5e5",
+          "secondary": "#4922f5"
+        }
+      },
+      "technical_highlight": "Overlay Kalman filter equations and live posterior graphs beside the 3D simulation to show rigorous computation behind the visual.",
+      "impression_goal": "Judges should feel like they are witnessing a universe *discovering itself.*"
+    },
+    "expected_outcome": "A mathematically rigorous, visually mesmerizing, and conceptually original simulation. The Probabilistic Universe Simulator transforms uncertainty into beauty — fusing Bayesian inference, physics, and real-time graphics into one seamless, learning cosmos."
+}
