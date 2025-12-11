@@ -12,22 +12,6 @@ https://github.com/user-attachments/assets/baeb841b-5cb1-4e5b-93b8-6e1b78a3fd50
 [![Three.js](https://img.shields.io/badge/Three.js-008080?logo=posrtfolio&logoColor=white&style=for-the-badge)](https://threejs.org/)
 
 
-## Quick Start
-
-```bash
-# Clone the repository
-git clone https://github.com/aditisingh02/Infera.git
-cd Infera
-
-# Install dependencies
-npm install
-
-# Start the development server
-npm run dev
-
-# Open http://localhost:5173 in your browser
-```
-
 ## What is Infera?
 
 Infera is an interactive 3D physics sandbox where **particles don't know physics — they learn it**. Each object begins uncertain about fundamental constants like gravity, mass, and friction. Through **Bayesian inference** and **Extended Kalman Filtering**, particles continuously update their beliefs as they observe their own motion.
@@ -164,8 +148,5 @@ P_t|t = (I - K_t H_t) P_t|t-1  // Covariance update
 - **Bayesian Inference:** Thomas Bayes (1763) - Probability theory foundations
 - **Information Theory:** Claude Shannon (1948) - Mathematical communication theory
 - **Scientific Method:** Visual representation of hypothesis testing and belief updating
-
-**🥇 Winner - EHC OpenHack**
----
 
 *Witness a universe discovering itself through probabilistic reasoning.*
